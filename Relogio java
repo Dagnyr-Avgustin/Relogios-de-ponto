@@ -1,0 +1,67 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const entradaBtn = document.getElementById('entradaBtn');
+    const saidaBtn = document.getElementById('saidaBtn');
+    const registrosBody = document.getElementById('registrosBody');
+    let registros = [];
+
+    entradaBtn.addEventListener('click', () => {
+        const now = new Date();
+        const data = formatDate(now);
+        const entradaHora = formatTime(now);
+        addRegistro(data, entradaHora, '--:--:--');
+    });
+
+    saidaBtn.addEventListener('click', () => {
+        const now = new Date();
+        const saidaHora = formatTime(now);
+        updateRegistroSaida(saidaHora);
+    });
+
+    function formatDate(date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    function formatTime(date) {
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${hours}:${minutes}:${seconds}`;
+    }
+
+    function addRegistro(data, entradaHora, saidaHora) {
+        registros.push({ data, entradaHora, saidaHora });
+        renderRegistros();
+    }
+
+    function updateRegistroSaida(saidaHora) {
+        if (registros.length === 0) {
+            alert('Nenhuma entrada registrada.');
+            return;
+        }
+
+        const lastRegistro = registros[registros.length - 1];
+        if (lastRegistro.saidaHora !== '--:--:--') {
+            alert('Última saída já registrada.');
+            return;
+        }
+
+        lastRegistro.saidaHora = saidaHora;
+        renderRegistros();
+    }
+
+    function renderRegistros() {
+        registrosBody.innerHTML = '';
+        registros.forEach((registro) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${registro.data}</td>
+                <td>${registro.entradaHora}</td>
+                <td>${registro.saidaHora}</td>
+            `;
+            registrosBody.appendChild(row);
+        });
+    }
+});
